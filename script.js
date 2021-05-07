@@ -1,12 +1,12 @@
 "use strict";
 
-let APIObject = [];
+let APIObjectArr;
 
 fetch(
   "https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple"
 )
   .then((response) => response.json())
   //   .then((data) => data)
-  .then((results) => console.log(results));
+  .then((data) => (APIObjectArr = data.results));
 
-// console.log(APIObject);
+console.log(APIObjectArr);
