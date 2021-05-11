@@ -1,5 +1,65 @@
 "use strict";
 
+// api database i am calling
+const url =
+  "https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple";
+
+// fetching data function
+const fetchingData = async (url) => {
+  const res = await fetch(url);
+  const data = await res.json();
+  const results = await data.results;
+  return results;
+};
+
+// actually fetching data using the Question class
+fetchingData(url)
+  .then((results) => {
+    let apiDataArr = [];
+    for (let i = 0; i < results.length; i++) {
+      let questionClass = new Question(
+        results[i].question,
+        results[i].correct_answer,
+        results[i].incorrect_answers
+      );
+      apiDataArr.push(questionClass);
+    }
+    return apiDataArr;
+  })
+  .then((apiDataArr) => {
+    for (let i = 0; i < apiDataArr.length; i++) {
+      let newGame = new Game();
+    }
+  });
+
+class Question {
+  // idea here is to use this to narrow down the api data into info that i need
+  constructor(question, correctAnswer, incorrectAnswers) {
+    this.question = question;
+    // this.incorrectAnswers = incorrectAnswers;
+    this.correctAnswer = correctAnswer;
+    this.answerChoices = this.combineAnswer(
+      this.correctAnswer,
+      incorrectAnswers
+    );
+  }
+
+  combineAnswer(correct, incorrect) {
+    return [correct, ...incorrect];
+  }
+}
+
+class Game {
+  // making a new game with player name and question information, question information may be redundant
+  constructor(name, questions, answers, correctAnswer) {
+    this.name = name;
+    this.questions = questions;
+    this.answers = answers;
+    this.correctAnswer = correctAnswer;
+  }
+}
+
+/*
 class Game {
   // attributes: players, player turn
   // methods: init function(start/reset game), state whose turn it is
@@ -31,8 +91,7 @@ class Player {
   storeAnswerGiven = (ans) => (ans = [this.answerGiven, ...ans]);
 }
 
-const url =
-  "https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple";
+
 
 // const apiData = async (url) => {
 //   let questionsArray = [];
@@ -123,3 +182,4 @@ console.log("last");
 // Now we need to make a game
 // make some players
 // Then we start the game (THIS CAN'T BE DONE UNTIL WE HAVE FINISHED LOADING THE QUESTIONS!) you will need to figure out how to make the code wait for this
+*/
