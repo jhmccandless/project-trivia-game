@@ -1,4 +1,34 @@
 "use strict";
+/*
+class Fetch {
+  // get the data from an API
+  // attr: URL
+  // methods: getting the data from url
+
+  getData() {
+    return fetch(url);
+  }
+}
+
+class UIcontroller extends fetch{
+  // uses url(super(url))
+  // async function for fetch
+
+    async planets () {
+      const planets = await this.getData().then(res => {return res.data})
+    })
+
+    this.renderPlanets(plants.results)
+    
+  }
+
+  renderPlanets(planets) {
+    const planetList = planets.map(planet) => {
+      return `html`
+    })
+    $('#content').html(planetList)
+  }
+*/
 
 // api database i am calling
 const url =
@@ -27,9 +57,8 @@ fetchingData(url)
     return apiDataArr;
   })
   .then((apiDataArr) => {
-    for (let i = 0; i < apiDataArr.length; i++) {
-      let newGame = new Game();
-    }
+    let newGame = new Game(apiDataArr);
+    return newGame.init();
   });
 
 class Question {
@@ -48,14 +77,35 @@ class Question {
     return [correct, ...incorrect];
   }
 }
+const rando = Math.floor(Math.random() * 6) + 1;
+
+class Player {
+  constructor(name, score) {
+    this.name = name;
+    this.score = score;
+  }
+  score = 0;
+
+  increaseScore(score) {
+    score = this.score;
+    score++;
+  }
+}
 
 class Game {
   // making a new game with player name and question information, question information may be redundant
-  constructor(name, questions, answers, correctAnswer) {
-    this.name = name;
+  constructor(questions) {
     this.questions = questions;
-    this.answers = answers;
-    this.correctAnswer = correctAnswer;
+    this.questionNumber = rando;
+  }
+
+  // calling this in the promise, I can get specific data to put into DOM
+  init(data) {
+    data = this.questions[this.questionNumber];
+    console.log(data.question);
+    console.log(data.answerChoices);
+    // let ans = prompt("test");
+    // console.log(Number(ans));
   }
 }
 
