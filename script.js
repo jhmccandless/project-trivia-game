@@ -14,6 +14,90 @@
 // question.answers
 // question.correct_answer
 // question.answer_is_correct(ans)
+/*
+try 4
+const url =
+  "https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple";
+
+class aquireData {
+  constructor(url) {
+    this.url = url;
+    this.refinedSet = this.refinedSet;
+  }
+
+  // initiating fetch call
+  fetchQuestionSet() {
+    // this just unedited api data, needs json and further refining
+    return fetch(this.url);
+  }
+}
+
+class UIcontroller extends aquireData {
+  constructor(url) {
+    super(url);
+  }
+
+  // promises to help page not upload before data is ready
+  // seems like different than what i've seen but it works here
+  async questionSet() {
+    const resolve = await this.fetchQuestionSet();
+    const data = await resolve.json();
+    const results = await data.results;
+    const refinedResults = this.retrieveQuestions(results);
+    const UIUpdating = this.UIUpdate(refinedResults);
+  }
+
+  // randomly organizes the answer choices into new array
+  randomizer(ansArr) {
+    const arrRando = [];
+    let arrOrig = ansArr;
+    if (arrOrig.length > 1) {
+      for (let i = arrOrig.length; i > 0; i--) {
+        let rando = Math.floor(Math.random() * arrOrig.length);
+        let pickedAns = arrOrig[rando];
+        let where = arrOrig.indexOf(pickedAns);
+        arrRando.push(pickedAns);
+        arrOrig.splice(where, 1);
+      }
+    }
+    return arrRando;
+  }
+  retrieveQuestions(results) {
+    let allQuesAnsArr = [];
+    for (let i = 0; i < results.length; i++) {
+      let newArr = [];
+      newArr.push(results[i].question);
+      newArr.push(results[i].correct_answer);
+      newArr.push(
+        this.randomizer([
+          results[i].correct_answer,
+          ...results[i].incorrect_answers,
+        ])
+      );
+      allQuesAnsArr.push(newArr);
+    }
+    return allQuesAnsArr;
+  }
+
+  UIUpdate(data) {
+    for (let i = 0; i < data.length; i++) {
+      let newHTML = `<div class="ques-div-${
+        [i] + 1
+      }" style="border-style: solid">
+        <h2 class="question-${Number([i]) + 1}">Question</h2>
+        <h3>${data[i][0]}</h3>
+        <p>${data[i][2][0]}</p>
+        <p>${data[i][2][1]}</p>
+        <p>${data[i][2][2]}</p>
+        <p>${data[i][2][3]}</p>
+      </div>`;
+      $(`.question-box`).html(newHTML);
+    }
+  }
+}
+
+new UIcontroller(url).questionSet();
+*/
 
 /*
 try 3. new method after consideration
@@ -30,6 +114,7 @@ const url =
 class aquireData {
   constructor(url) {
     this.url = url;
+    this.refinedSet = this.refinedSet;
   }
 
   // initiating fetch call
@@ -67,16 +152,134 @@ class UIcontroller extends aquireData {
         results[i].incorrect_answers
       );
       refinedSet = [refined, ...refinedSet];
+      // console.log(results[i].correct_answer);
     }
-    return refinedSet;
+    return refinedSet; //returns new questions with
   }
 
   updataUI(results) {
-    const questionMap = results.map((question) => {
-      return `<h2>Question</h2><h3>${question.question}</h3><p>${question.answerChoices}</p>`;
+    let corrAns = [];
+    for (let i = 0; i < results.length; i++) {
+      corrAns.push(results[i].correctAnswer);
+    }
+    const questionMap = results.map((question, index) => {
+      return `<div class="ques-div" id="ques-div-${
+        index + 1
+      }" style="border-style: solid">
+        <h2>Question</h2>
+        <h3 class="question" id="ques-${index + 1}">${question.question}</h3>
+        <p class="answer" id="answer-${
+          index + 1
+        }-1" style="border-style: solid">${question.randomChoices[0]}</p>
+        <p class="answer" id="answer-${index + 1}-2">${
+        question.randomChoices[1]
+      }</p>
+        <p class="answer" id="answer-${index + 1}-3">${
+        question.randomChoices[2]
+      }</p>
+        <p class="answer" id="answer-${index + 1}-4">${
+        question.randomChoices[3]
+      }</p>
+        <p style="display: none" class='answer' id="correct-${index + 1}">${
+        question.correctAnswer
+      }</p>
+      </div>`;
     });
     $(".question-box").html(questionMap);
+    for (let i = 0; i < questionMap.length; i++) {
+      for (let j = 0; j < 4; j++)
+        $(`#answer-${i + 1}-${j + 1}`).click(() => {
+          if (
+            $(`#answer-${i + 1}-${j + 1}`).text() ==
+            $(`#correct-${i + 1}`).text()
+          ) {
+            console.log("the correct answer!");
+          } else {
+            console.log("incorrect answer");
+          }
+        });
+    }
+    // $("#ques-1 > p").click(function () {
+    //   let guessText = $("p").text();
+    //   let answerText = $("#correct-ans").text();
+
+    //   if (guessText == answerText) {
+    //     console.log("guess right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   } else {
+    //     console.log("not right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   }
+    // });
+    // $("#answer-1").click(function () {
+    //   let guessText = $("#answer-1").text();
+    //   let answerText = $("#correct-ans").text();
+
+    //   if (guessText == answerText) {
+    //     console.log("guess right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   } else {
+    //     console.log("not right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   }
+    // });
+    // $("#answer-2").click(function () {
+    //   let guessText = $("#answer-2").text();
+    //   let answerText = $("#correct-ans").text();
+
+    //   if (guessText == answerText) {
+    //     console.log("guess right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   } else {
+    //     console.log("not right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   }
+    // });
+    // $("#answer-3").click(function () {
+    //   let guessText = $("#answer-3").text();
+    //   let answerText = $("#correct-ans").text();
+
+    //   if (guessText == answerText) {
+    //     console.log("guess right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   } else {
+    //     console.log("not right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   }
+    // });
+    // $("#answer-4").click(function () {
+    //   let guessText = $("#answer-4").text();
+    //   let answerText = $("#correct-ans").text();
+
+    //   if (guessText == answerText) {
+    //     console.log("guess right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   } else {
+    //     console.log("not right");
+    //     console.log(guessText);
+    //     console.log(answerText);
+    //   }
+    // });
   }
+
+  // answerSelection() {
+  //   const answerText = $("#ans-choice-1").text();
+  //   if (answerText === corrAns) {
+  //     console.log(answerText);
+  //     console.log(answerText);
+  //   } else {
+  //     console.log("something wrong");
+  //   }
+  // }
 }
 
 class Question {
@@ -85,10 +288,26 @@ class Question {
     this.question = question;
     this.correctAnswer = correctAnswer;
     this.answerChoices = this.combineAnswer(correctAnswer, incorrectAnswers);
+    this.randomChoices = this.randomizer(this.answerChoices);
   }
-
+  // combines the answers
   combineAnswer(correct, incorrect) {
     return [correct, ...incorrect];
+  }
+  // randomly organizes the answer choices into new array
+  randomizer(ansArr) {
+    const arrRando = [];
+    let arrOrig = ansArr;
+    if (arrOrig.length > 1) {
+      for (let i = arrOrig.length; i > 0; i--) {
+        let rando = Math.floor(Math.random() * arrOrig.length);
+        let pickedAns = arrOrig[rando];
+        let where = arrOrig.indexOf(pickedAns);
+        arrRando.push(pickedAns);
+        arrOrig.splice(where, 1);
+      }
+    }
+    return arrRando;
   }
 }
 
@@ -123,7 +342,7 @@ class UIcontroller extends fetch{
     })
     $('#content').html(planetList)
   }
-*/
+
 
 /*
 Try 2 that kinda worked. Able to get one question and ordered answers to log.
