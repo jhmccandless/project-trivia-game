@@ -168,10 +168,11 @@ class UIcontroller extends aquireData {
 
   updataUI(results) {
     let corrAns = [];
-    console.log(player.name);
+
     for (let i = 0; i < results.length; i++) {
       corrAns.push(results[i].correctAnswer);
     }
+
     const questionMap = results.map((question, index) => {
       return `<div class="ques-div" id="ques-div-${
         index + 1
@@ -195,27 +196,32 @@ class UIcontroller extends aquireData {
       }</p>
       </div>`;
     });
+
     $(".question-box").html(questionMap);
+
     for (let i = 0; i < questionMap.length; i++) {
       for (let j = 0; j < 4; j++)
         $(`#answer-${i + 1}-${j + 1}`).click(() => {
+          // console.log(player);
           if (
             $(`#answer-${i + 1}-${j + 1}`).text() ==
             $(`#correct-${i + 1}`).text()
           ) {
-            console.log("the correct answer!");
+            // console.log("the correct answer!");
             player.score++;
-            console.log(player.score);
+            // console.log(player.score);
           } else {
-            console.log("incorrect answer");
-            console.log(player.score);
+            // console.log("incorrect answer");
+            // console.log(player.score);
           }
+
           player.questionsAsked.push(results[i].question);
           player.answerChosen.push($(`#answer-${i + 1}-${j + 1}`).text());
-          console.log(player.questionsAsked);
-          console.log(player.answerChosen);
+          // console.log(player.questionsAsked);
+          // console.log(player.answerChosen);
           $(`#ques-div-${i + 1}`).hide();
           if (i === questionMap.length - 1) {
+            console.log(player);
           }
         });
     }
@@ -260,7 +266,7 @@ let player;
 $("#start-game").click(() => {
   const playerName = document.querySelector("#uniqueID").value;
   new UIcontroller(url).questionSet();
-  console.log(playerName);
+  // console.log(playerName);
   player = new Person(playerName);
   console.log(player);
   $(".input-data").hide();
