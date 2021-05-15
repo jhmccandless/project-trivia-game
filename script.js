@@ -110,6 +110,15 @@ bonus: hide the divs so only one question is seen at once (my origanal idea for 
 const url =
   "https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple";
 
+class Person {
+  constructor(name) {
+    this.name = name;
+    this.score = 0;
+    this.questionsAsked = [];
+    this.answerChosen = [];
+  }
+}
+
 // class to fetch questions
 class aquireData {
   constructor(url) {
@@ -159,6 +168,7 @@ class UIcontroller extends aquireData {
 
   updataUI(results) {
     let corrAns = [];
+    console.log(player.name);
     for (let i = 0; i < results.length; i++) {
       corrAns.push(results[i].correctAnswer);
     }
@@ -168,9 +178,9 @@ class UIcontroller extends aquireData {
       }" style="border-style: solid">
         <h2>Question</h2>
         <h3 class="question" id="ques-${index + 1}">${question.question}</h3>
-        <p class="answer" id="answer-${
-          index + 1
-        }-1" style="border-style: solid">${question.randomChoices[0]}</p>
+        <p class="answer" id="answer-${index + 1}-1">${
+        question.randomChoices[0]
+      }</p>
         <p class="answer" id="answer-${index + 1}-2">${
         question.randomChoices[1]
       }</p>
@@ -194,92 +204,22 @@ class UIcontroller extends aquireData {
             $(`#correct-${i + 1}`).text()
           ) {
             console.log("the correct answer!");
+            player.score++;
+            console.log(player.score);
           } else {
             console.log("incorrect answer");
+            console.log(player.score);
+          }
+          player.questionsAsked.push(results[i].question);
+          player.answerChosen.push($(`#answer-${i + 1}-${j + 1}`).text());
+          console.log(player.questionsAsked);
+          console.log(player.answerChosen);
+          $(`#ques-div-${i + 1}`).hide();
+          if (i === questionMap.length - 1) {
           }
         });
     }
-    // $("#ques-1 > p").click(function () {
-    //   let guessText = $("p").text();
-    //   let answerText = $("#correct-ans").text();
-
-    //   if (guessText == answerText) {
-    //     console.log("guess right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   } else {
-    //     console.log("not right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   }
-    // });
-    // $("#answer-1").click(function () {
-    //   let guessText = $("#answer-1").text();
-    //   let answerText = $("#correct-ans").text();
-
-    //   if (guessText == answerText) {
-    //     console.log("guess right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   } else {
-    //     console.log("not right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   }
-    // });
-    // $("#answer-2").click(function () {
-    //   let guessText = $("#answer-2").text();
-    //   let answerText = $("#correct-ans").text();
-
-    //   if (guessText == answerText) {
-    //     console.log("guess right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   } else {
-    //     console.log("not right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   }
-    // });
-    // $("#answer-3").click(function () {
-    //   let guessText = $("#answer-3").text();
-    //   let answerText = $("#correct-ans").text();
-
-    //   if (guessText == answerText) {
-    //     console.log("guess right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   } else {
-    //     console.log("not right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   }
-    // });
-    // $("#answer-4").click(function () {
-    //   let guessText = $("#answer-4").text();
-    //   let answerText = $("#correct-ans").text();
-
-    //   if (guessText == answerText) {
-    //     console.log("guess right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   } else {
-    //     console.log("not right");
-    //     console.log(guessText);
-    //     console.log(answerText);
-    //   }
-    // });
   }
-
-  // answerSelection() {
-  //   const answerText = $("#ans-choice-1").text();
-  //   if (answerText === corrAns) {
-  //     console.log(answerText);
-  //     console.log(answerText);
-  //   } else {
-  //     console.log("something wrong");
-  //   }
-  // }
 }
 
 class Question {
@@ -311,7 +251,20 @@ class Question {
   }
 }
 
-new UIcontroller(url).questionSet();
+class Game {
+  init() {}
+}
+
+let player;
+
+$("#start-game").click(() => {
+  const playerName = document.querySelector("#uniqueID").value;
+  new UIcontroller(url).questionSet();
+  console.log(playerName);
+  player = new Person(playerName);
+  console.log(player);
+  $(".input-data").hide();
+});
 
 /*
 class Fetch {
