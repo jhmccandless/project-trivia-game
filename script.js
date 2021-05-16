@@ -23,8 +23,6 @@ bonus: hide the divs so only one question is seen at once (my origanal idea for 
 */
 
 // url i am getting data from:
-const url =
-  "https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple";
 
 class Person {
   constructor(name) {
@@ -56,7 +54,6 @@ class UIcontroller extends aquireData {
     super(url);
     this.players = players;
   }
-
   // promises to help page not upload before data is ready
   // seems like different than what i've seen but it works here
   async questionSet() {
@@ -66,8 +63,7 @@ class UIcontroller extends aquireData {
     // isolates data we need from the results
     const narrowResults = this.refineQuestionSet(results);
     // updates UI
-    this.updataUI(narrowResults);
-    // this.updataUI(narrowResults, this.players[1]);
+    this.updataUI(narrowResults, this.players[playerIndex]);
   }
 
   // this is designed to take take what i need from the results
@@ -85,7 +81,25 @@ class UIcontroller extends aquireData {
     return refinedSet; //returns new questions with
   }
 
-  updataUI(results) {
+  playerNameUI(totalPlayers) {
+    totalPlayers = numberOfPlayers;
+    let htmlString = [];
+    for (let i = 1; i <= numberOfPlayers; i++) {
+      htmlString.push(
+        `<input type="text" name="name" id="player-${i}" placeholder="Player ${i} Name" /><br />`
+      );
+    }
+    htmlString.push('<button id="start-game">Start Game</button>');
+    // console.log(htmlString.join(""));
+    $(".input-data").html(htmlString);
+    $("#start-game").click(() => {
+      let beginGame = new Game(numberOfPlayers).init();
+      console.log("start game");
+      return beginGame;
+    });
+  }
+
+  updataUI(results, player) {
     let corrAns = [];
     for (let i = 0; i < results.length; i++) {
       corrAns.push(results[i].correctAnswer);
@@ -120,33 +134,34 @@ class UIcontroller extends aquireData {
     for (let i = 0; i < questionMap.length; i++) {
       for (let j = 0; j < 4; j++)
         $(`#answer-${i + 1}-${j + 1}`).click(() => {
-          // console.log(player);
           if (
             $(`#answer-${i + 1}-${j + 1}`).text() ==
             $(`#correct-${i + 1}`).text()
           ) {
-            // console.log("the correct answer!");
             player.score++;
-            // console.log(player.score);
-          } else {
-            // console.log("incorrect answer");
-            // console.log(player.score);
           }
 
           player.questionsAsked.push(results[i].question);
           player.actualAnswer.push(results[i].correctAnswer);
           player.answerChosen.push($(`#answer-${i + 1}-${j + 1}`).text());
-          // console.log(player.questionsAsked);
-          // console.log(player.answerChosen);
           $(`#ques-div-${i + 1}`).hide();
+
           if (i === questionMap.length - 1) {
-            // console.log(player.name);
-            // console.log(player.questionsAsked);
-            // console.log(player.answerChosen);
-            // console.log(player.actualAnswer);
-            $("#results-info").html(
-              `<p>${player.name} Score:<br>${player.score} Correct! 🙃</p>`
-            );
+            if (playerIndex === this.players.length - 1) {
+              console.log("end game");
+              let scoreScreen = [];
+              for (let i = 0; i < this.players.length; i++) {
+                // console.log(this.players[i].name);
+                scoreScreen.push(
+                  `<p>${this.players[i].name} Score:<br>${this.players[i].score} Correct! 🙃</p>`
+                );
+              }
+              $("#results-info").html(scoreScreen);
+            } else {
+              console.log("first player done");
+              playerIndex++;
+              new UIcontroller(url, playersArr).questionSet();
+            }
           }
         });
     }
@@ -183,26 +198,39 @@ class Question {
 }
 
 class Game {
-  init() {}
+  constructor(playerNumber) {
+    this.playerNumber = playerNumber;
+  }
+  init() {
+    let player;
+    for (let i = 1; i <= this.playerNumber; i++) {
+      let playerName = document.querySelector(`#player-${i}`).value;
+      // console.log(playerName);
+      player = `player${i}`;
+      player = new Person(playerName);
+      playersArr.push(player);
+    }
+    console.log(playersArr);
+    new UIcontroller(url, playersArr).questionSet();
+    $(".input-data").hide();
+  }
 }
 
-let player;
-let numberOfPlayers = 2;
 let playersArr = [];
+let playerIndex = 0;
+let numberOfPlayers;
+const url =
+  "https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple";
 
-$("#start-game").click(() => {
-  for (let i = 1; i <= numberOfPlayers; i++) {
-    let playerName = document.querySelector(`#player-${i}`).value;
-    // console.log(playerName);
-    player = `player${i}`;
-    player = new Person(playerName);
-    playersArr.push(player);
-  }
-  console.log(playersArr);
-  $(".input-data").hide();
-  for (let i = 0; i < playersArr.length; i++) {
-    new UIcontroller(url, playersArr[i]).questionSet();
-  }
+$("#player-num-input").click(() => {
+  $(".game-info").hide();
+  numberOfPlayers = document.querySelector("#quant-players").value;
+  let playerNumberUpdate = new UIcontroller().playerNameUI(numberOfPlayers);
+  return playerNumberUpdate;
 });
 
-// find a way to update global player variable!!!!
+// $("#start-game").click(() => {
+//   let beginGame = new Game(numberOfPlayers).init();
+//   console.log("start game");
+//   return beginGame;
+// });
