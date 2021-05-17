@@ -61,15 +61,15 @@ class UIcontroller extends aquireData {
     const data = await resolve.json();
     const results = await data.results;
     // isolates data we need from the results
-    const narrowResults = this.refineQuestionSet(results);
+    const narrowResults = this.refineQuestionSet(results, numberOfQuestions);
     // updates UI
     this.updataUI(narrowResults, this.players[playerIndex]);
   }
 
   // this is designed to take take what i need from the results
-  refineQuestionSet(results) {
+  refineQuestionSet(results, quesAmount) {
     let refinedSet = [];
-    for (let i = 0; i < results.length; i++) {
+    for (let i = 0; i < quesAmount; i++) {
       const refined = new Question(
         results[i].question,
         results[i].correct_answer,
@@ -150,12 +150,25 @@ class UIcontroller extends aquireData {
             if (playerIndex === this.players.length - 1) {
               console.log("end game");
               let scoreScreen = [];
+              let scoresArr = [];
+              let highScoreIndex = 0;
+              let winnersArr = [];
               for (let i = 0; i < this.players.length; i++) {
-                // console.log(this.players[i].name);
+                scoresArr.push(this.players[i].score);
                 scoreScreen.push(
                   `<p>${this.players[i].name} Score:<br>${this.players[i].score} Correct! 🙃</p>`
                 );
               }
+              for (let i = 0; i < scoresArr.length; i++) {
+                if (scoresArr[i] === highScoreIndex) {
+                  winnersArr.push(this.players[i].name);
+                } else if (scoresArr[i] > highScoreIndex) {
+                  highScoreIndex = scoresArr[i];
+                  winnersArr = [];
+                  winnersArr.push(this.players[i].name);
+                }
+              }
+              scoreScreen.push(`<p>The winner is ${winnersArr}! 🐬</p>`);
               $("#results-info").html(scoreScreen);
             } else {
               console.log("first player done");
@@ -219,18 +232,14 @@ class Game {
 let playersArr = [];
 let playerIndex = 0;
 let numberOfPlayers;
+let numberOfQuestions;
 const url =
   "https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple";
 
-$("#player-num-input").click(() => {
+$("#game-info-input").click(() => {
   $(".game-info").hide();
   numberOfPlayers = document.querySelector("#quant-players").value;
+  numberOfQuestions = document.querySelector("#quant-questions").value;
   let playerNumberUpdate = new UIcontroller().playerNameUI(numberOfPlayers);
   return playerNumberUpdate;
 });
-
-// $("#start-game").click(() => {
-//   let beginGame = new Game(numberOfPlayers).init();
-//   console.log("start game");
-//   return beginGame;
-// });
