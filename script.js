@@ -104,9 +104,10 @@ class UIcontroller extends aquireData {
     for (let i = 0; i < results.length; i++) {
       corrAns.push(results[i].correctAnswer);
     }
-
     const questionMap = results.map((question, index) => {
-      return `<div class="ques-div" id="ques-div-${
+      return `<h1>${
+        this.players[playerIndex].name
+      }'s turn!</h1><div class="ques-div" id="ques-div-${
         index + 1
       }" style="border-style: solid">
         <h2>Question</h2>
@@ -130,7 +131,6 @@ class UIcontroller extends aquireData {
     });
 
     $(".question-box").html(questionMap);
-
     for (let i = 0; i < questionMap.length; i++) {
       for (let j = 0; j < 4; j++)
         $(`#answer-${i + 1}-${j + 1}`).click(() => {
@@ -149,6 +149,7 @@ class UIcontroller extends aquireData {
           if (i === questionMap.length - 1) {
             if (playerIndex === this.players.length - 1) {
               console.log("end game");
+              $(".question-box").hide();
               let scoreScreen = [];
               let scoresArr = [];
               let highScoreIndex = 0;
@@ -168,7 +169,18 @@ class UIcontroller extends aquireData {
                   winnersArr.push(this.players[i].name);
                 }
               }
-              scoreScreen.push(`<p>The winner is ${winnersArr}! 🐬</p>`);
+              if (highScoreIndex === 0) {
+                scoreScreen.push(
+                  `<p>No one wins!!!!! If you cant answer one question right</p>`
+                );
+              } else if (scoresArr.length > 1) {
+                scoreScreen.push(
+                  `<p>The winners are ${winnersArr.join(", and ")}! 🐬</p>`
+                );
+              } else {
+                console.log("score is less tahn 1");
+                scoreScreen.push(`<p>The winner is ${winnersArr}! 🐬</p>`);
+              }
               $("#results-info").html(scoreScreen);
             } else {
               console.log("first player done");
