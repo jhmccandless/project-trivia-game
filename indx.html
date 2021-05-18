@@ -10,22 +10,29 @@
   <body>
     <div class="wrapper">
       <div class="game-info">
-        <h3 class="game-info-title"></h3>
+        <h3 class="game-info-title">Game Input</h3>
+        <p>
+          Input the number of players and the desired number of questions to ask
+          each player.
+        </p>
         <input
-          type="text"
+          type="number"
           name="name"
           id="quant-players"
           placeholder="How Many Players?"
+          min="1"
         /><br />
         <input
-          type="text"
+          type="number"
           name="name"
           id="quant-questions"
           placeholder="How Many Questions?"
+          min="1"
         /><br />
         <button id="game-info-input">Next</button>
       </div>
       <div class="input-data"></div>
+      <div class="player-turn"></div>
       <div class="question-box"></div>
       <div class="results-box" id="results-info"></div>
     </div>

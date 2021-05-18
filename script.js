@@ -76,25 +76,24 @@ class UIcontroller extends aquireData {
         results[i].incorrect_answers
       );
       refinedSet = [refined, ...refinedSet];
-      // console.log(results[i].correct_answer);
     }
     return refinedSet; //returns new questions with
   }
 
   playerNameUI(totalPlayers) {
+    // makes the next div to input player names appear
     totalPlayers = numberOfPlayers;
-    let htmlString = [];
+    let htmlString = [`<p>Input players' names!</p>`];
     for (let i = 1; i <= numberOfPlayers; i++) {
       htmlString.push(
         `<input type="text" name="name" id="player-${i}" placeholder="Player ${i} Name" /><br />`
       );
     }
     htmlString.push('<button id="start-game">Start Game</button>');
-    // console.log(htmlString.join(""));
     $(".input-data").html(htmlString);
     $("#start-game").click(() => {
+      // start the game starting with first players turn
       let beginGame = new Game(numberOfPlayers).init();
-      console.log("start game");
       return beginGame;
     });
   }
@@ -104,10 +103,9 @@ class UIcontroller extends aquireData {
     for (let i = 0; i < results.length; i++) {
       corrAns.push(results[i].correctAnswer);
     }
+    $(".player-turn").html(`<h1>${player.name}'s Turn</h1>`);
     const questionMap = results.map((question, index) => {
-      return `<h1>${
-        this.players[playerIndex].name
-      }'s turn!</h1><div class="ques-div" id="ques-div-${
+      return `<div class="ques-div" id="ques-div-${
         index + 1
       }" style="border-style: solid">
         <h2>Question</h2>
@@ -148,9 +146,9 @@ class UIcontroller extends aquireData {
 
           if (i === questionMap.length - 1) {
             if (playerIndex === this.players.length - 1) {
-              console.log("end game");
               $(".question-box").hide();
-              let scoreScreen = [];
+              $(".player-turn").hide();
+              let scoreScreen = [`<h3>Results:</h3>`];
               let scoresArr = [];
               let highScoreIndex = 0;
               let winnersArr = [];
@@ -173,17 +171,15 @@ class UIcontroller extends aquireData {
                 scoreScreen.push(
                   `<p>No one wins!!!!! If you cant answer one question right</p>`
                 );
-              } else if (scoresArr.length > 1) {
+              } else if (winnersArr.length > 1) {
                 scoreScreen.push(
                   `<p>The winners are ${winnersArr.join(", and ")}! 🐬</p>`
                 );
               } else {
-                console.log("score is less tahn 1");
                 scoreScreen.push(`<p>The winner is ${winnersArr}! 🐬</p>`);
               }
               $("#results-info").html(scoreScreen);
             } else {
-              console.log("first player done");
               playerIndex++;
               new UIcontroller(url, playersArr).questionSet();
             }
@@ -235,7 +231,6 @@ class Game {
       player = new Person(playerName);
       playersArr.push(player);
     }
-    console.log(playersArr);
     new UIcontroller(url, playersArr).questionSet();
     $(".input-data").hide();
   }
