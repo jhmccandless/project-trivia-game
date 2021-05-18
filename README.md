@@ -11,3 +11,5 @@ The game is not pretty, I was going for funcionality over prettyness here...even
 the game is designed to not show what question is right or wrong until the results page. This is the reason I saved the questions, answers, and correct answers for each player to created another div with each person's questions, what they answered and the correct answer.
 
 I know my updataUI is a bit long and could refactor into different functions. In fact, alot of the code could be refactored (I think I could make less variables in the entire code but referenceing lengths and such).
+
+I also would have liked to have a New Game button for when the game is over.
