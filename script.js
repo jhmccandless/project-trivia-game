@@ -23,7 +23,6 @@ bonus: hide the divs so only one question is seen at once (my origanal idea for 
 */
 
 // url i am getting data from:
-
 class Person {
   constructor(name) {
     this.name = name;
@@ -179,6 +178,31 @@ class UIcontroller extends aquireData {
                 scoreScreen.push(`<p>The winner is ${winnersArr}! 🐬</p>`);
               }
               $("#results-info").html(scoreScreen);
+              let fullResultsHTML = [];
+              for (let i = 0; i < numberOfPlayers; i++) {
+                fullResultsHTML.push(
+                  `<h1>${this.players[i].name}'s Results</h1>`
+                );
+                for (
+                  let j = 0;
+                  j < this.players[i].questionsAsked.length;
+                  j++
+                ) {
+                  fullResultsHTML.push(`<div class="player-result-div" id="ques-div" style="border-style: solid">
+                    <h2>Question</h2>
+                    <h3 class="question-asked" id="ques-${i + 1}">${
+                    this.players[i].questionsAsked[j]
+                  }</h3>
+                    <p class="actual-answer" id="actual-answer-${
+                      i + 1
+                    }-1">You answered: ${this.players[i].answerChosen[j]}</p>
+                    <p class='actual answer' id="actual-correct-${
+                      i + 1
+                    }">Correct Answer: ${this.players[i].actualAnswer[j]}</p>
+                  </div>`);
+                }
+              }
+              $("#results-full").html(fullResultsHTML);
             } else {
               playerIndex++;
               new UIcontroller(url, playersArr).questionSet();
@@ -226,7 +250,6 @@ class Game {
     let player;
     for (let i = 1; i <= this.playerNumber; i++) {
       let playerName = document.querySelector(`#player-${i}`).value;
-      // console.log(playerName);
       player = `player${i}`;
       player = new Person(playerName);
       playersArr.push(player);
